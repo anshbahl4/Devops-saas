@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-service
+spec:
+  replicas: {{ .Values.notification.replicaCount }}
+  selector:
+    matchLabels:
+      app: notification-service
+  template:
+    metadata:
+      labels:
+        app: notification-service
+    spec:
+      containers:
+      - name: notification-service
+        image: {{ .Values.notification.image }}
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 3004
+        env:
+        - name: AWS_ACCESS_KEY
+          value: {{ .Values.aws.accessKey }}
+        - name: AWS_SECRET_KEY
+          value: {{ .Values.aws.secretKey }}
+        - name: AWS_REGION
+          value: {{ .Values.aws.region }}
+        - name: SQS_URL
+          value: {{ .Values.aws.sqsUrl }}
