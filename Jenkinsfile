@@ -9,17 +9,27 @@ pipeline {
 
     stages {
 
+        // 🔍 DEBUG (REMOVE LATER)
+        stage('Debug Files') {
+            steps {
+                sh 'pwd'
+                sh 'ls -R'
+            }
+        }
+
+        // 🐳 BUILD IMAGES
         stage('Build Docker Images') {
             steps {
                 sh '''
-                docker build -t auth-service:${IMAGE_TAG} ./devops-saas/services/auth-service
-                docker build -t user-service:${IMAGE_TAG} ./devops-saas/services/user-service
-                docker build -t order-service:${IMAGE_TAG} ./devops-saas/services/order-service
-                docker build -t notification-service:${IMAGE_TAG} ./devops-saas/services/notification-service
+                docker build -t auth-service:${IMAGE_TAG} ./services/auth-service
+                docker build -t user-service:${IMAGE_TAG} ./services/user-service
+                docker build -t order-service:${IMAGE_TAG} ./services/order-service
+                docker build -t notification-service:${IMAGE_TAG} ./services/notification-service
                 '''
             }
         }
 
+        // 🔐 LOGIN TO AWS ECR
         stage('Login to ECR') {
             steps {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']]) {
@@ -30,6 +40,7 @@ pipeline {
             }
         }
 
+        // 📤 PUSH IMAGES
         stage('Push to ECR') {
             steps {
                 sh '''
@@ -48,6 +59,7 @@ pipeline {
             }
         }
 
+        // 🚀 DEPLOY USING HELM
         stage('Deploy to Kubernetes') {
             steps {
                 sh '''
