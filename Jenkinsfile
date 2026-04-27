@@ -9,19 +9,13 @@ pipeline {
 
     stages {
 
-        stage('Clone Code') {
-            steps {
-                git branch: 'main', url: 'https://github.com/anshbahl4/Devops-saas.git'
-            }
-        }
-
         stage('Build Docker Images') {
             steps {
                 sh '''
-                docker build -t auth-service:${IMAGE_TAG} ./services/auth-service
-                docker build -t user-service:${IMAGE_TAG} ./services/user-service
-                docker build -t order-service:${IMAGE_TAG} ./services/order-service
-                docker build -t notification-service:${IMAGE_TAG} ./services/notification-service
+                docker build -t auth-service:${IMAGE_TAG} ./devops-saas/services/auth-service
+                docker build -t user-service:${IMAGE_TAG} ./devops-saas/services/user-service
+                docker build -t order-service:${IMAGE_TAG} ./devops-saas/services/order-service
+                docker build -t notification-service:${IMAGE_TAG} ./devops-saas/services/notification-service
                 '''
             }
         }
